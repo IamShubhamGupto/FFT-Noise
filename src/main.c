@@ -151,7 +151,7 @@ void dataToComplexReal(int N, float** m_real, unsigned char* data) {
 }
 
 
-void testfft(float beta, char *filename) {
+void FFTNoise(float beta, char *filename) {
     int N = 512;
     unsigned char* data;
     unsigned int* modfft;
@@ -212,9 +212,9 @@ int main(int argc, char **argv) {
     }
 
     if (argc == 3) {
-        testfft(atof(argv[1]), argv[2]);
+        FFTNoise(atof(argv[1]), argv[2]);
     } else {
-        testfft(atof(argv[1]), NULL);
+        FFTNoise(atof(argv[1]), NULL);
     }
 
     return EXIT_SUCCESS;
