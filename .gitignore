@@ -3,6 +3,8 @@ output
 # Prerequisites
 *.d
 bin/
+.vscode
+.DS_Store
 # Object files
 *.o
 *.ko

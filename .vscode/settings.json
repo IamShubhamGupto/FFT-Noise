@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "*.ml": "ocaml",
-        "*.mli": "ocaml",
-        "stb_image.h": "c"
-    }
-}
