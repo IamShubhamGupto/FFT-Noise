@@ -1,6 +1,10 @@
 #include <math.h>
 #include <stdlib.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+
+
 #define SWAP(x, y)        \
     do                    \
     {                     \

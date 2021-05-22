@@ -1,22 +1,17 @@
-#include "fft.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 #include <time.h>
-#define DEBUG 1
-#define DO_FFT 1
-#define DO_IFFT -1
-#define ENABLE_LOW_PASS_BUTTERWORTH_FILTER 0
-#define FREQUENCY_FILTER 1
-void free2d(float **p)
-{
+
+#include "fft.h"
+#include "stb_image.h"
+#include "stb_image_write.h"
+
+#define COMP 4
+
+void free2d(float **p) {
     free(p[0]);
     free(p);
 }
 
-float **malloc2d(int v, int h)
-{
+float **malloc2d(int v, int h) {
     int i;
     float **m;
     float *p;
@@ -32,51 +27,20 @@ float **malloc2d(int v, int h)
     return m;
 }
 
-int powerOf2(unsigned int v)
-{
+float* malloc1D(int N) {
+    return (float*)malloc(sizeof(float) * N);
+}
+
+int powerOf2(unsigned int v) {
     return v > 0 && (v & (v - 1)) == 0;
 }
 
-unsigned int toRGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-{
+unsigned int toRGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
     return (r) | (g << 8) | (b << 16) | (a << 24);
 }
 
-/**
- * refer 
- * http://users.cs.cf.ac.uk/Dave.Marshall/CM0268/PDF/09_CM0268_Frequence_Space.pdf
- * for generate_lpbf and apply_filter
- */
-#if ENABLE_LOW_PASS_BUTTERWORTH_FILTER
-void generate_lpbf(float **filter, float **matreal, float **matim, int lgth, int wdth, int w0, int n)
-{
-    int i;
-    int j;
-    float term;
-    for (i = 0; i < lgth; i++)
-    {
-        for (j = 0; j < wdth; j++)
-        {
-            term = pow(((matreal[i][j] * matreal[i][j]) + (matim[i][j] * matim[i][j])) / (w0 * w0), n);
-            filter[i][j] = (1.0 + term);
-        }
-    }
-}
-void apply_lpbf(float **filter, float **mat, int lgth, int wdth)
-{
-    int i;
-    int j;
-    for (i = 0; i < lgth; i++)
-    {
-        for (j = 0; j < wdth; j++)
-        {
-            mat[i][j] /= filter[i][j];
-        }
-    }
-}
-#endif
-void apply_filter_f(float *frequency, float **mat, int lgth, int wdth, float beta)
-{
+
+void applyFilter(float *frequency, float **mat, int lgth, int wdth, float beta) {
     int i;
     int j;
     float **radial_freq = malloc2d(lgth, wdth);
@@ -99,164 +63,133 @@ void apply_filter_f(float *frequency, float **mat, int lgth, int wdth, float bet
     free2d(radial_freq);
 }
 
-void testifft(float **m_real, float **m_imag, int x, int y, int comp)
-{
-    unsigned int *modfft;
-    int i, j, res;
-    ifft(m_real, m_imag, x, y);
+void saveImage(float** data, int x, int y) {
+    unsigned int* temp = (unsigned int *)malloc(sizeof(unsigned int) * x * y * COMP);
 
-    fftshift(m_real, x, y);
-
-    modfft = (unsigned int *)malloc(sizeof(unsigned int) * x * y * comp);
-    for (i = 0; i < x; ++i)
-    {
-        for (j = 0; j < y; ++j)
-        {
-            unsigned char v = (unsigned char)m_real[i][j];
-            modfft[i + j * x] = toRGBA(v, v, v, 255);
+    int i, j;
+    for (i = 0; i < x; ++i) {
+        for (j = 0; j < y; ++j) {
+            unsigned char v = (unsigned char)data[i][j];
+            temp[i + j * x] = toRGBA(v, v, v, 255);
         }
     }
 
-    res = stbi_write_png("bin/fractal_noise.png", x, y, comp, modfft, 0);
+    int res = stbi_write_png("output/fractal_noise.png", x, y, COMP, temp, 0);
 
-    if (!res)
-    {
+    if (!res) {
         printf("Error saving file\n");
+        free(temp);
+        exit(1);
     }
-    free(modfft);
 }
-void testfft(float beta, char *filename)
-{
-    if (DEBUG)
-    {
-        printf("beta - %f\n", beta);
+
+unsigned char* initRandInput(int N) {
+    int size = N * N * 4;
+
+    unsigned char* data = (unsigned char *)malloc(sizeof(unsigned char) * size);
+    unsigned int* rand_img = (unsigned int *)malloc(sizeof(unsigned int) * size);
+
+    int i, j;
+    for (i = 0, j = 0; i < size; i += 4, j++) {
+
+        unsigned char col = rand() % 255;
+
+        data[i] = col;
+        data[i + 1] = col;
+        data[i + 2] = col;
+        data[i + 3] = 1;
+        rand_img[j] = toRGBA(col, col, col, 255);
     }
+    int res = stbi_write_png("output/original_rand.png", N, N, COMP, rand_img, 0);
+
+    if (!res) {
+        printf("Error saving file\n");
+        free(data);
+        free(rand_img);
+        exit(0);
+    }
+
+    free(rand_img);
+    return data;
+}
+
+unsigned char* initFileInput(int* N, char* filename) {
+    FILE* file = fopen(filename, "rb");
+
+    if (!file) {
+        printf("Could not open file: %s", filename);
+        fclose(file);
+        exit(1);
+    }
+    
+    int comp, x, y;
+    unsigned char* data = stbi_load_from_file(file, &x, &y, &comp, STBI_rgb_alpha);
+
+    if(x != y) {
+        printf("Error: Image must be a square.");
+        fclose(file);
+        exit(1);
+    }
+
+    *N = x;
+
+    fclose(file);
+    return data;
+}
+
+void dataToComplexReal(int N, float** m_real, unsigned char* data) {
+    int offset = 0, i, j;
+
+    for (j = 0; j < N; ++j) {
+        for (i = 0; i < N; ++i) {
+            int off = i + j * N + offset;
+            m_real[i][j] = (float)data[off] + (float)data[off + 1] + (float)data[off + 2];
+            m_real[i][j] /= COMP - 1;
+            offset += COMP - 1;
+        }
+    }
+}
+
+
+void testfft(float beta, char *filename) {
     int N = 512;
-    unsigned char *data;
-    unsigned int *modfft;
-    float **m_real;
-    float **modulus;
-    float **m_imag;
-    float **filter;
-    float *frequency;
-    int x, y, i, j, comp, res, offset;
-    FILE *file;
+    unsigned char* data;
+    unsigned int* modfft;
+    float** m_real = malloc2d(N, N);
+    float** modulus = malloc2d(N, N);
+    float** m_imag = malloc2d(N, N);
+    float** filter = malloc2d(N, N);
+    float* frequency = malloc1D(N);
 
-    if (filename != NULL)
-    {
-        file = fopen(filename, "rb");
+    int i, j, res, offset;
 
-        if (!file)
-        {
-            fclose(file);
-            return;
-        }
-        data = stbi_load_from_file(file, &x, &y, &comp, STBI_rgb_alpha);
-    }
-    else
-    {
-        x = N;
-        y = N;
-        comp = 4;
+    data = filename == NULL ? initRandInput(N) : initFileInput(&N, filename);
 
-        int size = x * y * comp;
-
-        data = (unsigned char *)malloc(sizeof(unsigned char) * size);
-        unsigned int *rand_img = (unsigned int *)malloc(sizeof(unsigned int) * size);
-        j = 0;
-        for (i = 0; i < size; i += 4)
-        {
-
-            unsigned char col = rand() % 255;
-
-            data[i] = col;
-            data[i + 1] = col;
-            data[i + 2] = col;
-            data[i + 3] = 1;
-            rand_img[j] = toRGBA(col, col, col, 255);
-            ++j;
-        }
-        res = stbi_write_png("bin/original_rand.png", x, y, comp, rand_img, 0);
-
-        if (!res)
-        {
-            printf("Error saving file\n");
-        }
-    }
-
-    if (x != y || !powerOf2(x))
-    {
+    if (!powerOf2(N)) {
         printf("Error: Image dimensions must be a power of 2\n");
-
-        if (filename != NULL)
-        {
-            stbi_image_free(data);
-            fclose(file);
-        }
+        stbi_image_free(data);
         return;
     }
 
-    m_real = malloc2d(x, y);
-    modulus = malloc2d(x, y);
-    filter = malloc2d(x, y);
-    frequency = (float *)malloc(sizeof(float) * x);
-    printf("width %d, height %d\n", x, y);
+    printf("Beta : %f\nwidth : %d\nheight : %d\n", beta, N, N);
 
-    offset = 0;
-    for (j = 0; j < y; ++j)
-    {
-        for (i = 0; i < x; ++i)
-        {
-            int off = i + j * x + offset;
-            m_real[i][j] = (float)data[off] + (float)data[off + 1] + (float)data[off + 2];
-            m_real[i][j] /= comp - 1;
-            offset += comp - 1;
-        }
-    }
+    dataToComplexReal(N, m_real, data);
 
-    m_imag = malloc2d(x, y);
+    fft(m_real, m_imag, N, N);
+    fftfreq(N, 1.0, frequency);
 
-    // perform fast fourier transform on the 2d signal (red channel)
-    fft(m_real, m_imag, x, y);
+    applyFilter(frequency, m_real, N, N, beta);
+    applyFilter(frequency, m_imag, N, N, beta);
 
-    fftfreq(x, 1.0, frequency);
-#if ENABLE_LOW_PASS_BUTTERWORTH_FILTER
-    generate_lpbf(filter, m_real, m_imag, x, y, w0, beta);
-    apply_lpbf(filter, m_real, x, y);
-    apply_lpbf(filter, m_imag, x, y);
-#endif
+    mod(modulus, m_real, m_imag, N, N);
+    fftshift(modulus, N, N);
+    center(modulus, m_real, N, N);
+    saveImage(m_real, N, N);
 
-#if FREQUENCY_FILTER
-    apply_filter_f(frequency, m_real, x, y, beta);
-    apply_filter_f(frequency, m_imag, x, y, beta);
-#endif
 
-    //compute the modulus of the fourier transform
-    mod(modulus, m_real, m_imag, x, y);
-
-    //shift the fourier transform to move the zero frequency in center
-    fftshift(modulus, x, y);
-
-    center(modulus, m_real, x, y);
-
-    modfft = (unsigned int *)malloc(sizeof(unsigned int) * x * y * comp);
-    for (i = 0; i < x; ++i)
-    {
-        for (j = 0; j < y; ++j)
-        {
-            unsigned char v = (unsigned char)m_real[i][j];
-            modfft[i + j * x] = toRGBA(v, v, v, 255);
-        }
-    }
-
-    res = stbi_write_png("bin/spectrum.png", x, y, comp, modfft, 0);
-
-    if (!res)
-    {
-        printf("Error saving file\n");
-    }
-
-    testifft(m_real, m_imag, x, y, comp);
+    ifft(m_real, m_imag, N, N);
+    fftshift(m_real, N, N);
+    saveImage(m_real, N, N);
 
     free2d(modulus);
     free2d(m_imag);
@@ -265,29 +198,22 @@ void testfft(float beta, char *filename)
     free2d(filter);
     free(frequency);
 
-    if (filename != NULL)
-    {
+    if (filename != NULL) {
         stbi_image_free(data);
-        fclose(file);
     }
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     srand(time(0));
-    if (argc < 2)
-    {
-        printf("Usage: ./bin/fft.out beta\n");
+    if (argc < 2) {
+        printf("Usage: ./bin/fft.out beta [input file]\n");
         printf("\nbeta - roughness factor\n");
         return EXIT_FAILURE;
     }
 
-    if (argc == 3)
-    {
+    if (argc == 3) {
         testfft(atof(argv[1]), argv[2]);
-    }
-    else
-    {
+    } else {
         testfft(atof(argv[1]), NULL);
     }
 
