@@ -9,25 +9,20 @@ Utilizing 2D Fast Fourier Transforms on 2D vectors/ images to generate 1/f Noise
   git clone https://github.com/IamShubhamGupto/FFT-Noise.git
   cd FFT-Noise
   make 
-  ./bin/fft.out ./bin/fft.out mode path-to-input-image beta
+  ./bin/fft.out beta
   ```  
 
   <b>EXAMPLE </b>
   
   ```shell
   make 
-  ./bin/fft.out 2 "samples/download.png" 1.70 
+  ./bin/fft.out 1.7
   ```
   
   Guide:
   
   ```
 Usage: ./bin/fft.out mode path-to-input-image beta
-mode:
-
-        1 - Direct Fourier Transform
-
-        2 - Inverse Fourier Transform
 
 beta - roughness factor
   ```
