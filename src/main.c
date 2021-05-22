@@ -126,7 +126,7 @@ void testifft(float **m_real, float **m_imag, int x, int y, int comp)
     }
     free(modfft);
 }
-void testfft(float beta)
+void testfft(float beta, char* filename)
 {
     if (DEBUG)
     {
@@ -141,29 +141,49 @@ void testfft(float beta)
     float **filter;
     float *frequency;
     int x, y, i, j, comp, res, offset;
+    FILE *file;
 
-    x = N;
-    y = N;
-    comp = 4;
+    if(filename != NULL) {
+        file = fopen(filename, "rb");
 
-    int size = x * y * 4;
+        if (!file)
+        {
+            fclose(file);
+            return;
+        }
+        data = stbi_load_from_file(file, &x, &y, &comp, STBI_rgb_alpha);
+    } else {
+        x = N;
+        y = N;
+        comp = 4;
 
-    data = (unsigned char *)malloc(sizeof(unsigned char) * size);
+        int size = x * y * 4;
 
-    for (i = 0; i < size; i+=4) {
+        data = (unsigned char *)malloc(sizeof(unsigned char) * size);
 
-        unsigned char col = rand() % 255;
+        for (i = 0; i < size; i+=4) {
 
-        data[i] = col;
-        data[i + 1] = col;
-        data[i + 2] = col;
-        data[i + 3] = 1;
+            unsigned char col = rand() % 255;
 
+            data[i] = col;
+            data[i + 1] = col;
+            data[i + 2] = col;
+            data[i + 3] = 1;
+
+        }
     }
+
+   
+
 
     if (x != y || !powerOf2(x))
     {
         printf("Error: Image dimensions must be a power of 2\n");
+
+        if(filename != NULL) {
+            stbi_image_free(data);
+            fclose(file);
+        }
         return;
     }
 
@@ -236,6 +256,11 @@ void testfft(float beta)
     free(modfft);
     free2d(filter);
     free(frequency);
+
+    if(filename != NULL) {
+        stbi_image_free(data);
+        fclose(file);
+    }
 }
 
 int main(int argc, char **argv)
@@ -248,7 +273,13 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    testfft(atof(argv[1]));
+    if(argc == 3) {
+        testfft(atof(argv[1]), argv[2]);
+    } else {
+        testfft(atof(argv[1]), NULL);
+    }
+
+    
 
     return EXIT_SUCCESS;
 }
