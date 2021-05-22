@@ -57,4 +57,4 @@ Frequency Domain](http://www.cs.tut.fi/~moncef/SGN-3016-DIP/Chap04.pdf)
 - [Highpass filtering](https://eecs.wsu.edu/~cs445/Lecture_9.pdf)
 - [Moving into the Frequency Domain](http://users.cs.cf.ac.uk/Dave.Marshall/CM0268/PDF/09_CM0268_Frequence_Space.pdf)
 
-##### Special thanks to [Faraz Shaikh](https://github.com/FarazzShaikh) for introducing me to noise generation and terrain building 🤯
+#### Special thanks to [Faraz Shaikh](https://github.com/FarazzShaikh) for introducing me to noise generation and terrain building 🤯
