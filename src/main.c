@@ -3,6 +3,7 @@
 #include "stb_image_write.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include <time.h>
 #define DEBUG 1
 #define DO_FFT 1
 #define DO_IFFT -1
@@ -125,12 +126,13 @@ void testifft(float **m_real, float **m_imag, int x, int y, int comp)
     }
     free(modfft);
 }
-void testfft(char *filename, float beta, int inverse)
+void testfft(float beta, char* filename)
 {
     if (DEBUG)
     {
         printf("beta - %f\n", beta);
     }
+    int N = 256;
     unsigned char *data;
     unsigned int *modfft;
     float **m_real;
@@ -139,22 +141,49 @@ void testfft(char *filename, float beta, int inverse)
     float **filter;
     float *frequency;
     int x, y, i, j, comp, res, offset;
+    FILE *file;
 
-    FILE *file = fopen(filename, "rb");
+    if(filename != NULL) {
+        file = fopen(filename, "rb");
 
-    if (!file)
-    {
-        fclose(file);
-        return;
+        if (!file)
+        {
+            fclose(file);
+            return;
+        }
+        data = stbi_load_from_file(file, &x, &y, &comp, STBI_rgb_alpha);
+    } else {
+        x = N;
+        y = N;
+        comp = 4;
+
+        int size = x * y * 4;
+
+        data = (unsigned char *)malloc(sizeof(unsigned char) * size);
+
+        for (i = 0; i < size; i+=4) {
+
+            unsigned char col = rand() % 255;
+
+            data[i] = col;
+            data[i + 1] = col;
+            data[i + 2] = col;
+            data[i + 3] = 1;
+
+        }
     }
 
-    data = stbi_load_from_file(file, &x, &y, &comp, STBI_rgb_alpha);
+   
+
 
     if (x != y || !powerOf2(x))
     {
         printf("Error: Image dimensions must be a power of 2\n");
-        stbi_image_free(data);
-        fclose(file);
+
+        if(filename != NULL) {
+            stbi_image_free(data);
+            fclose(file);
+        }
         return;
     }
 
@@ -218,42 +247,39 @@ void testfft(char *filename, float beta, int inverse)
     {
         printf("Error saving file\n");
     }
-    if (inverse == DO_IFFT)
-    {
-        testifft(m_real, m_imag, x, y, comp);
-    }
+    
+    testifft(m_real, m_imag, x, y, comp);
+
     free2d(modulus);
     free2d(m_imag);
     free2d(m_real);
     free(modfft);
     free2d(filter);
     free(frequency);
-    stbi_image_free(data);
-    fclose(file);
+
+    if(filename != NULL) {
+        stbi_image_free(data);
+        fclose(file);
+    }
 }
 
 int main(int argc, char **argv)
 {
-    if (argc < 4)
+    srand(time(0));
+    if (argc < 2)
     {
-        printf("Usage: ./bin/fft.out mode path-to-input-image beta\n");
-        printf("mode:\n");
-        printf("\n\t1 - Direct Fourier Transform\n");
-        printf("\n\t2 - Inverse Fourier Transform\n");
+        printf("Usage: ./bin/fft.out beta\n");
         printf("\nbeta - roughness factor\n");
-
         return EXIT_FAILURE;
     }
 
-    if (strcmp(argv[1], "1") == 0)
-    {
+    if(argc == 3) {
+        testfft(atof(argv[1]), argv[2]);
+    } else {
+        testfft(atof(argv[1]), NULL);
+    }
 
-        testfft(argv[2], atof(argv[3]), DO_FFT);
-    }
-    else
-    {
-        testfft(argv[2], atof(argv[3]), DO_IFFT);
-    }
+    
 
     return EXIT_SUCCESS;
 }
