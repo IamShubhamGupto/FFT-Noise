@@ -179,7 +179,7 @@ void testfft(float beta, char *filename)
         {
             for (i = 0; i < x; ++i)
             {
-                unsigned char v = (unsigned char)rand_img[i + j * x];
+                unsigned char v = (unsigned char)data[i + j * x];
                 rand_img[i + j * x] = toRGBA(v, v, v, 255);
             }
         }
