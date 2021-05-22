@@ -1,6 +1,6 @@
 CC=gcc
 EXE=fft.out
-FLAGS=-O3 -lm -g 
+FLAGS=-O3 -lm -g
 OUTPUT_PATH = bin
 SRC_PATH = src
 

@@ -126,7 +126,7 @@ void testifft(float **m_real, float **m_imag, int x, int y, int comp)
     }
     free(modfft);
 }
-void testfft(float beta, char* filename)
+void testfft(float beta, char *filename)
 {
     if (DEBUG)
     {
@@ -143,7 +143,8 @@ void testfft(float beta, char* filename)
     int x, y, i, j, comp, res, offset;
     FILE *file;
 
-    if(filename != NULL) {
+    if (filename != NULL)
+    {
         file = fopen(filename, "rb");
 
         if (!file)
@@ -152,7 +153,9 @@ void testfft(float beta, char* filename)
             return;
         }
         data = stbi_load_from_file(file, &x, &y, &comp, STBI_rgb_alpha);
-    } else {
+    }
+    else
+    {
         x = N;
         y = N;
         comp = 4;
@@ -161,7 +164,8 @@ void testfft(float beta, char* filename)
 
         data = (unsigned char *)malloc(sizeof(unsigned char) * size);
 
-        for (i = 0; i < size; i+=4) {
+        for (i = 0; i < size; i += 4)
+        {
 
             unsigned char col = rand() % 255;
 
@@ -169,18 +173,30 @@ void testfft(float beta, char* filename)
             data[i + 1] = col;
             data[i + 2] = col;
             data[i + 3] = 1;
+        }
+        unsigned int *rand_img = (unsigned int *)malloc(sizeof(unsigned int) * x * y * comp);
+        for (j = 0; j < y; ++j)
+        {
+            for (i = 0; i < x; ++i)
+            {
+                unsigned char v = (unsigned char)rand_img[i + j * x];
+                rand_img[i + j * x] = toRGBA(v, v, v, 255);
+            }
+        }
+        res = stbi_write_png("bin/original_rand.png", x, y, comp, rand_img, 0);
 
+        if (!res)
+        {
+            printf("Error saving file\n");
         }
     }
-
-   
-
 
     if (x != y || !powerOf2(x))
     {
         printf("Error: Image dimensions must be a power of 2\n");
 
-        if(filename != NULL) {
+        if (filename != NULL)
+        {
             stbi_image_free(data);
             fclose(file);
         }
@@ -247,7 +263,7 @@ void testfft(float beta, char* filename)
     {
         printf("Error saving file\n");
     }
-    
+
     testifft(m_real, m_imag, x, y, comp);
 
     free2d(modulus);
@@ -257,7 +273,8 @@ void testfft(float beta, char* filename)
     free2d(filter);
     free(frequency);
 
-    if(filename != NULL) {
+    if (filename != NULL)
+    {
         stbi_image_free(data);
         fclose(file);
     }
@@ -273,13 +290,14 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    if(argc == 3) {
+    if (argc == 3)
+    {
         testfft(atof(argv[1]), argv[2]);
-    } else {
+    }
+    else
+    {
         testfft(atof(argv[1]), NULL);
     }
-
-    
 
     return EXIT_SUCCESS;
 }

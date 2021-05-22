@@ -27,9 +27,11 @@ Utilizing 2D Fast Fourier Transforms on 2D vectors/ images to generate 1/f Noise
   Guide:
   
   ```
-Usage: ./bin/fft.out mode path-to-input-image beta
+Usage: ./bin/fft.out beta [path]
 
 beta - roughness factor
+
+path - optional - path to a square input image, dimensions are a power of 2.
   ```
   #### Clean Up
   In order to clean the bin directory, run ```make clean```.
