@@ -3,10 +3,6 @@
 
   <h1 align="center">FFT-Noise</h1>
   
-<p align="center">
-    <img src="./Assets/ifft_24.png" alt="FFT-Noise Sample" width="200px" height="200px">
-</p>
-
   <p align="center">
     2D Fractal Noise using Fast Fourier Transforms.
     <br />
