@@ -19,8 +19,12 @@ FFT-Noise is an implementation of a method of producing Fractal Noise using Fast
 It takes in an array of random points as input (possibly from an image) and returns FFT-Noise generated from it. The Noise looks something like this:
 
 <p align="center">
-    <img src="./Assets/ifft_24.png" alt="FFT-Noise Sample">
+    <img src="./Assets/ifft_24.png" alt="FFT-Noise Sample"> 
+  <h5 align="center">
+    Fractal Noise obtained from <a href="samples/download.png">this</a> after using <i>beta = 2.4</i>
+  </h5>
 </p>
+
 
 This noise can be used in procedural texture and terrain generation.
 
