@@ -24,6 +24,26 @@ It takes in an array of random points as input (possibly from an image) and retu
 
 This noise can be used in procedural texture and terrain generation.
 
+# How does this work?
+
+According to _Techniques for Fractal Terrain Generation_<sup>1</sup> FFT-Noise is generated in four distint steps:
+
+- Obtain an array of (random valued) point.
+- Perform an FFT on the points.
+- Scale the FFT result by a Frequency Filter
+- Perform an Inverse FFT (IFFT).
+
+## Frequency Filter
+
+The filter used is 
+
+
+<p align="center">
+    <img src="./Assets/filter.svg" alt="FFT-Noise Sample" width="100px">
+</p>
+
+Where, `v` is the result of the FFT, `f` is the frequency associated with the `v` and `r` is a roughness factor.
+
 # Usage
 
 ### Build 
