@@ -108,10 +108,9 @@ void testifft(float **m_real, float **m_imag, int x, int y, int comp)
     fftshift(m_real, x, y);
 
     modfft = (unsigned int *)malloc(sizeof(unsigned int) * x * y * comp);
-
-    for (j = 0; j < y; ++j)
+    for (i = 0; i < x; ++i)
     {
-        for (i = 0; i < x; ++i)
+        for (j = 0; j < y; ++j)
         {
             unsigned char v = (unsigned char)m_real[i][j];
             modfft[i + j * x] = toRGBA(v, v, v, 255);
@@ -132,7 +131,7 @@ void testfft(float beta, char *filename)
     {
         printf("beta - %f\n", beta);
     }
-    int N = 256;
+    int N = 512;
     unsigned char *data;
     unsigned int *modfft;
     float **m_real;
@@ -160,10 +159,11 @@ void testfft(float beta, char *filename)
         y = N;
         comp = 4;
 
-        int size = x * y * 4;
+        int size = x * y * comp;
 
         data = (unsigned char *)malloc(sizeof(unsigned char) * size);
-
+        unsigned int *rand_img = (unsigned int *)malloc(sizeof(unsigned int) * size);
+        j = 0;
         for (i = 0; i < size; i += 4)
         {
 
@@ -173,15 +173,8 @@ void testfft(float beta, char *filename)
             data[i + 1] = col;
             data[i + 2] = col;
             data[i + 3] = 1;
-        }
-        unsigned int *rand_img = (unsigned int *)malloc(sizeof(unsigned int) * x * y * comp);
-        for (j = 0; j < y; ++j)
-        {
-            for (i = 0; i < x; ++i)
-            {
-                unsigned char v = (unsigned char)data[i + j * x];
-                rand_img[i + j * x] = toRGBA(v, v, v, 255);
-            }
+            rand_img[j] = toRGBA(col, col, col, 255);
+            ++j;
         }
         res = stbi_write_png("bin/original_rand.png", x, y, comp, rand_img, 0);
 
@@ -247,10 +240,9 @@ void testfft(float beta, char *filename)
     center(modulus, m_real, x, y);
 
     modfft = (unsigned int *)malloc(sizeof(unsigned int) * x * y * comp);
-
-    for (j = 0; j < y; ++j)
+    for (i = 0; i < x; ++i)
     {
-        for (i = 0; i < x; ++i)
+        for (j = 0; j < y; ++j)
         {
             unsigned char v = (unsigned char)m_real[i][j];
             modfft[i + j * x] = toRGBA(v, v, v, 255);
