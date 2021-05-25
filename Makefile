@@ -11,4 +11,4 @@ $(EXE): $(SRC_PATH)/main.c $(INC_PATH)/fft.h
 	$(CC) $(SRC_PATH)/main.c $(FLAGS) -o $(OUTPUT_PATH)/$(EXE)
 
 clean: 
-	rm -f -r bin/ output/
+	rm -f -r bin/ output/ analysis/*.csv analysis/*.png
