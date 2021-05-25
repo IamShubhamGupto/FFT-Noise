@@ -1,3 +1,4 @@
+#!/bin/bash
 SET_N=(
     8
     16
@@ -9,6 +10,7 @@ SET_N=(
     1024
     2048
     4096
+    8192
 )
 
 PROGRAM=fftNoise

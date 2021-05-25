@@ -83,7 +83,7 @@ $ make clean
 
 **Special thanks to [Faraz Shaikh](https://github.com/FarazzShaikh) for introducing me to noise generation and terrain building 🤯**
 
-| Refrence | Source | 
+| Reference | Source | 
 |----------|--------|
 | <sup>1</sup>Techniques for Fractal Terrain Generation | [Krista Bird, et al.](https://web.williams.edu/Mathematics/sjmiller/public_html/hudson/Dickerson_Terrain.pdf) | 
 | 2D FFT Function | [Karim Naaji](https://github.com/karimnaaji/fft) | 
