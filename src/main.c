@@ -1,10 +1,14 @@
 #include <time.h>
 
-#include "fft.h"
-#include "stb_image.h"
-#include "stb_image_write.h"
+#include "../include/fft.h"
+#include "../include/stb_image.h"
+#include "../include/stb_image_write.h"
 
 #define COMP 4
+
+int DEBUG;
+double START_TIME;
+double END_TIME;
 
 void free2d(float **p) {
     free(p[0]);
@@ -151,8 +155,8 @@ void dataToComplexReal(int N, float** m_real, unsigned char* data) {
 }
 
 
-void FFTNoise(float beta, char *filename) {
-    int N = 512;
+void FFTNoise(float beta, int N, char *filename) {
+    START_TIME = (float)clock()/CLOCKS_PER_SEC;
     unsigned char* data;
     unsigned int* modfft;
     float** m_real = malloc2d(N, N);
@@ -181,16 +185,23 @@ void FFTNoise(float beta, char *filename) {
     applyFilter(frequency, m_real, N, N, beta);
     applyFilter(frequency, m_imag, N, N, beta);
 
-    mod(modulus, m_real, m_imag, N, N);
-    fftshift(modulus, N, N);
-    center(modulus, m_real, N, N);
-    saveImage(m_real, N, N);
+    if(!DEBUG) {
+        mod(modulus, m_real, m_imag, N, N);
+        fftshift(modulus, N, N);
+        center(modulus, m_real, N, N);
+        saveImage(m_real, N, N);
 
+   
+    }
 
     ifft(m_real, m_imag, N, N);
     fftshift(m_real, N, N);
-    saveImage(m_real, N, N);
 
+    if(!DEBUG) 
+        saveImage(m_real, N, N);
+    
+
+    END_TIME = (float)clock()/CLOCKS_PER_SEC;;
     free2d(modulus);
     free2d(m_imag);
     free2d(m_real);
@@ -205,17 +216,27 @@ void FFTNoise(float beta, char *filename) {
 
 int main(int argc, char **argv) {
     srand(time(0));
-    if (argc < 2) {
+    if (argc < 3) {
         printf("Usage: ./bin/fft.out beta [input file]\n");
         printf("\nbeta - roughness factor\n");
+        printf("N - Resolution\n");
         return EXIT_FAILURE;
     }
 
-    if (argc == 3) {
-        FFTNoise(atof(argv[1]), argv[2]);
+    if (argc == 4) {
+        if(strcmp(argv[3], "-d") == 0) {
+            DEBUG = 1;  
+            FFTNoise(atof(argv[1]), atoi(argv[2]), NULL);
+        } else {
+            DEBUG = 0;
+            FFTNoise(atof(argv[1]), atoi(argv[2]), argv[3]);
+        }
+        
     } else {
-        FFTNoise(atof(argv[1]), NULL);
+        FFTNoise(atof(argv[1]), atoi(argv[2]), NULL);
     }
 
+    if(DEBUG)
+        fprintf(stderr, "%f", END_TIME - START_TIME);
     return EXIT_SUCCESS;
 }

@@ -1,4 +1,6 @@
 output
+*.csv
+*.png
 
 # Prerequisites
 *.d

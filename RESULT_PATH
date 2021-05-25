@@ -1,0 +1,102 @@
+fftNoise,Beta : 8.000000 width : 2 height : 2,8
+fftNoise,Beta : 16.000000 width : 2 height : 2,16
+fftNoise,Beta : 32.000000 width : 2 height : 2,32
+fftNoise,Beta : 64.000000 width : 2 height : 2,64
+fftNoise,Beta : 128.000000 width : 2 height : 2,128
+fftNoise,Beta : 256.000000 width : 2 height : 2,256
+fftNoise,Beta : 512.000000 width : 2 height : 2,512
+fftNoise,Beta : 1024.000000 width : 2 height : 2,1024
+fftNoise,Beta : 2048.000000 width : 2 height : 2,2048
+fftNoise,Beta : 4096.000000 width : 2 height : 2,4096
+fftNoise,Beta : 8.000000 width : 2 height : 2,8
+fftNoise,Beta : 16.000000 width : 2 height : 2,16
+fftNoise,Beta : 32.000000 width : 2 height : 2,32
+fftNoise,Beta : 64.000000 width : 2 height : 2,64
+fftNoise,Beta : 128.000000 width : 2 height : 2,128
+fftNoise,Beta : 256.000000 width : 2 height : 2,256
+fftNoise,Beta : 512.000000 width : 2 height : 2,512
+fftNoise,Beta : 1024.000000 width : 2 height : 2,1024
+fftNoise,Beta : 2048.000000 width : 2 height : 2,2048
+fftNoise,Beta : 4096.000000 width : 2 height : 2,4096
+fftNoise,,8
+fftNoise,,16
+fftNoise,,32
+fftNoise,,64
+fftNoise,,128
+fftNoise,,256
+fftNoise,,512
+fftNoise,,1024
+fftNoise,,2048
+fftNoise,,4096
+fftNoise,,8
+fftNoise,,16
+fftNoise,,32
+fftNoise,,64
+fftNoise,,128
+fftNoise,,256
+fftNoise,,512
+fftNoise,,1024
+fftNoise,,2048
+fftNoise,,4096
+fftNoise,,8
+fftNoise,,16
+fftNoise,,32
+fftNoise,,64
+fftNoise,,128
+fftNoise,,256
+fftNoise,,512
+fftNoise,,1024
+fftNoise,,2048
+fftNoise,,4096
+fftNoise,,8
+fftNoise,,16
+fftNoise,,32
+fftNoise,,64
+fftNoise,,128
+fftNoise,,256
+fftNoise,,512
+fftNoise,,1024
+fftNoise,,2048
+fftNoise,,4096
+fftNoise,,8
+fftNoise,,16
+fftNoise,,32
+fftNoise,,64
+fftNoise,,128
+fftNoise,,256
+fftNoise,,512
+fftNoise,,1024
+fftNoise,,2048
+fftNoise,,8
+fftNoise,,16
+fftNoise,,32
+fftNoise,,64
+fftNoise,,128
+fftNoise,,256
+fftNoise,,512
+fftNoise,,1024
+fftNoise,0.000829,8
+fftNoise,0.001051,16
+fftNoise,0.001280,32
+fftNoise,0.003355,64
+fftNoise,0.006136,128
+fftNoise,0.024006,256
+fftNoise,0.097895,512
+fftNoise,0.464226,1024
+fftNoise,0.001269,8
+fftNoise,0.001014,16
+fftNoise,0.001428,32
+fftNoise,0.004841,64
+fftNoise,0.009906,128
+fftNoise,0.025641,256
+fftNoise,0.100916,512
+fftNoise,0.445147,1024
+fftNoise,2.241485,2048
+fftNoise,0.003299,8
+fftNoise,0.000906,16
+fftNoise,0.001630,32
+fftNoise,0.003508,64
+fftNoise,0.010036,128
+fftNoise,0.025835,256
+fftNoise,0.099490,512
+fftNoise,0.462014,1024
