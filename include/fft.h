@@ -1,8 +1,9 @@
+// https://github.com/karimnaaji/fft
+
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 #include <math.h>
 #include <stdlib.h>
-
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 
 
 #define SWAP(x, y)        \
@@ -18,39 +19,6 @@
 #define FFT 1
 #define FFT2D 2
 
-static void center(float **in, float **out, int length, int width)
-{
-    int i, j;
-
-    for (i = 0; i < length; i++)
-    {
-        for (j = 0; j < width; j++)
-        {
-            if (i < length / 2)
-            {
-                if (j < width / 2)
-                {
-                    out[i][j] = in[i + length / 2][j + width / 2];
-                }
-                else
-                {
-                    out[i][j] = in[i + length / 2][j - width / 2];
-                }
-            }
-            else
-            {
-                if (j < width / 2)
-                {
-                    out[i][j] = in[i - length / 2][j + width / 2];
-                }
-                else
-                {
-                    out[i][j] = in[i - length / 2][j - width / 2];
-                }
-            }
-        }
-    }
-}
 static void arrange(int begin, int end, float *p1)
 {
     int i = 0;
@@ -61,6 +29,7 @@ static void arrange(int begin, int end, float *p1)
         ++begin;
     }
 }
+
 static void fftfreq(int n, float d, float *results)
 {
     int i;
@@ -86,6 +55,7 @@ static void fftfreq(int n, float d, float *results)
     free(p1);
     free(p2);
 }
+
 static void fourrier(float data[], unsigned long nn[], int ndim, int isign)
 {
     int idim;

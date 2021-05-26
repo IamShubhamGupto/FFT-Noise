@@ -2,9 +2,6 @@
 make  
 
 SET_N=(
-    8
-    16
-    32
     64
     128
     256
@@ -12,6 +9,7 @@ SET_N=(
     1024
     2048
     4096
+    8192
 )
 
 PROGRAM=fftNoise
@@ -28,4 +26,4 @@ do
    echo $RESULT >> $RESULT_PATH
 done
 
-python analysis/plot.py
+python3 analysis/plot.py
