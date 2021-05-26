@@ -1,23 +1,48 @@
 #include <time.h>
-#include "./perlin.c"
+#include <stdlib.h>
+#include "../../../include/perlin.h"
+#include "../../../include/simplex.h"
+#include "../../../include/fractal.h"
 
-double START_TIME;
-double END_TIME;
-
-
-int main() {
-    int N = 4096;
+int main(int argc, char **argv)
+{
+    if (argc < 2)
+    {
+        printf("ERROR: need 1 integer argument\n");
+        return 1;
+    }
+    float START_TIME_PERLIN;
+    float END_TIME_PERLIN;
+    float START_TIME_SIMPLEX;
+    float END_TIME_SIMPLEX;
+    float START_TIME_FFT;
+    float END_TIME_FFT;
+    int N = atoi(argv[1]);
     int x, y, i;
 
-    START_TIME = (float)clock() / CLOCKS_PER_SEC;
-    
-        for(y=0; y<N; y++)
-            for(x=0; x<N; x++) 
-                perlin2d(x, y, 0.5, 8);
-            
+    START_TIME_PERLIN = (float)clock() / CLOCKS_PER_SEC;
 
-    END_TIME = (float)clock() / CLOCKS_PER_SEC;
+    for (y = 0; y < N; y++)
+        for (x = 0; x < N; x++)
+            perlin2d(x, y, 0.5, 8);
 
-    fprintf(stderr, "%f %f %f",END_TIME, START_TIME, (END_TIME - START_TIME) * 1000);
+    END_TIME_PERLIN = (float)clock() / CLOCKS_PER_SEC;
+
+    START_TIME_SIMPLEX = (float)clock() / CLOCKS_PER_SEC;
+
+    for (y = 0; y < N; y++)
+        for (x = 0; x < N; x++)
+            Noise2D(x, y);
+
+    END_TIME_SIMPLEX = (float)clock() / CLOCKS_PER_SEC;
+
+    START_TIME_FFT = (float)clock() / CLOCKS_PER_SEC;
+
+    FFTNoise(1, 2.0, N, NULL);
+
+    END_TIME_FFT = (float)clock() / CLOCKS_PER_SEC;
+
+    fprintf(stderr, "%f %f %f\n", (END_TIME_PERLIN - START_TIME_PERLIN) * 1000,
+            (END_TIME_SIMPLEX - START_TIME_SIMPLEX) * 1000, (END_TIME_FFT - START_TIME_FFT) * 1000);
     return 0;
 }
