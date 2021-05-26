@@ -1,12 +1,7 @@
-#include <time.h>
-
-#include "../include/fractal.h"
+#include "fft.h"
+#include "stb_image.h"
+#include "stb_image_write.h"
 #define COMP 4
-
-// int DEBUG;
-double START_TIME;
-double END_TIME;
-#if 0
 void free2d(float **p)
 {
     free(p[0]);
@@ -93,7 +88,7 @@ void saveImage(float **data, int x, int y)
     }
 }
 
-unsigned int hash(unsigned int x)
+static unsigned int hash(unsigned int x)
 {
     x = ((x >> 16) ^ x) * 0x45d9f3b;
     x = ((x >> 16) ^ x) * 0x45d9f3b;
@@ -242,44 +237,4 @@ void FFTNoise(int DEBUG, float beta, int N, char *filename)
     {
         stbi_image_free(data);
     }
-}
-#endif
-int main(int argc, char **argv)
-{
-    int DEBUG = 0;
-    srand(time(0));
-    if (argc < 3)
-    {
-        printf("Usage: ./bin/fft.out beta [input file]\n");
-        printf("\nbeta - roughness factor\n");
-        printf("N - Resolution\n");
-        return EXIT_FAILURE;
-    }
-    struct timespec vartime;
-    long time_elapsed_nanos;
-    if (argc == 4)
-    {
-        if (strcmp(argv[3], "-d") == 0)
-        {
-            DEBUG = 1;
-            START_TIME = (float)clock() / CLOCKS_PER_SEC;
-
-            FFTNoise(DEBUG, atof(argv[1]), atoi(argv[2]), NULL);
-
-            END_TIME = (float)clock() / CLOCKS_PER_SEC;
-        }
-        else
-        {
-            DEBUG = 0;
-            FFTNoise(DEBUG, atof(argv[1]), atoi(argv[2]), argv[3]);
-        }
-    }
-    else
-    {
-        FFTNoise(DEBUG, atof(argv[1]), atoi(argv[2]), NULL);
-    }
-
-    if (DEBUG)
-        fprintf(stderr, "%f", (END_TIME - START_TIME) * 1000.0);
-    return EXIT_SUCCESS;
 }
