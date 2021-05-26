@@ -96,6 +96,13 @@ void saveImage(float **data, int x, int y)
     }
 }
 
+unsigned int hash(unsigned int x) {
+    x = ((x >> 16) ^ x) * 0x45d9f3b;
+    x = ((x >> 16) ^ x) * 0x45d9f3b;
+    x = (x >> 16) ^ x;
+    return x;
+}
+
 unsigned char *initRandInput(int N)
 {
     int size = N * N * 4;
@@ -106,7 +113,6 @@ unsigned char *initRandInput(int N)
     int i, j;
     for (i = 0, j = 0; i < size; i += 4, j++)
     {
-
         unsigned char col = rand() % 255;
 
         data[i] = col;
@@ -115,15 +121,20 @@ unsigned char *initRandInput(int N)
         data[i + 3] = 1;
         rand_img[j] = toRGBA(col, col, col, 255);
     }
-    int res = stbi_write_png("output/original_rand.png", N, N, COMP, rand_img, 0);
+    
+    
+    if(!DEBUG) {
+        int res = stbi_write_png("output/original_rand.png", N, N, COMP, rand_img, 0);
 
-    if (!res)
-    {
-        printf("Error saving file\n");
-        free(data);
-        free(rand_img);
-        exit(0);
+        if (!res)
+        {
+            printf("Error saving file\n");
+            free(data);
+            free(rand_img);
+            exit(0);
+        }
     }
+        
 
     free(rand_img);
     return data;
@@ -172,9 +183,7 @@ void dataToComplexReal(int N, float **m_real, unsigned char *data)
     }
 }
 
-void FFTNoise(float beta, int N, char *filename)
-{
-    // START_TIME = (float)clock() / CLOCKS_PER_SEC;
+void FFTNoise(float beta, int N, char *filename) {
     unsigned char *data;
     unsigned int *modfft;
     float **m_real = malloc2d(N, N);
@@ -217,8 +226,6 @@ void FFTNoise(float beta, int N, char *filename)
 
     if (!DEBUG)
         saveImage(m_real, N, N);
-
-    // END_TIME = (float)clock() / CLOCKS_PER_SEC;
 
     free2d(modulus);
     free2d(m_imag);

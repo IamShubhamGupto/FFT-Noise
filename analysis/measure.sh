@@ -28,4 +28,4 @@ do
    echo $RESULT >> $RESULT_PATH
 done
 
-# python analysis/plot.py
+python analysis/plot.py

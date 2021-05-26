@@ -5,9 +5,11 @@ data = np.genfromtxt('analysis/analysis.csv',
                      delimiter=',', names=['type', 'dt', 'N'])
 
 plt.plot(data['N'], data['dt'], '-p', color='red')
-plt.legend(["Fractal Noise"])
+
+plt.legend(["FFT Noise"], loc="best")
 plt.ylabel("Time (milliseconds)")
-plt.xlabel("Image resolution (NxN pixels)")
+plt.xlabel("Resolution (NxN pixels)")
+
 
 # function to show the plot
 if(not os.path.exists("analysis/plots")):
