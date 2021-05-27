@@ -1,18 +1,19 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from matplotlib.ticker import FormatStrFormatter
-
 data = np.genfromtxt('analysis/analysis.csv',
-                     delimiter=',', names=['type', 'dt', 'N'])
+                     delimiter=',', names=['N', 'pNoise', 'sNoise', 'fftNoise'])
 
-plt.plot(data['N'], data['dt'], '-p', color='red')
+plt1 = plt.plot(data['N'], data['pNoise'], '-p', color='red', label="Perlin Noise")
+plt2 = plt.plot(data['N'], data['sNoise'], '-p', color='blue', label="Simplex Noise")
+plt3 = plt.plot(data['N'], data['fftNoise'], '-p', color='green', label="FFT Noise")
 
-plt.legend(["FFT Noise"], loc="best")
-plt.ylabel("Time (milliseconds)")
+plt.legend()
+
+plt.ylabel("Time (seocnds)")
 plt.xlabel("Resolution (NxN pixels)")
-plt.xscale("log", base=2)
 
+plt.xscale("log", base=2)
 
 
 # function to show the plot

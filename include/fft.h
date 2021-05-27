@@ -1,6 +1,4 @@
-// https://github.com/karimnaaji/fft
-
-#pragma GCC diagnostic ignored "-Wunused-function"
+// Modified form https://github.com/karimnaaji/fft
 
 #include <math.h>
 #include <stdlib.h>
@@ -14,10 +12,38 @@
         x = _y;           \
         y = _x;           \
     } while (0);
-#define SQUARE(x) ((x) * (x))
 #define IFFT -1
 #define FFT 1
 #define FFT2D 2
+
+static void normalise(float **mat, int lgth, int wdth)
+{
+    int i, j;
+    float max, min;
+
+    min = mat[0][0];
+    max = mat[0][0];
+
+    for (i = 0; i < lgth; ++i)
+        for (j = 0; j < wdth; ++j)
+        {
+            if (mat[i][j] < min)
+            {
+                min = mat[i][j];
+            }
+
+            if (mat[i][j] > max)
+            {
+                max = mat[i][j];
+            }
+        }
+
+    for (i = 0; i < lgth; ++i)
+        for (j = 0; j < wdth; ++j)
+        {
+            mat[i][j] = ((mat[i][j] - min) / (max - min)) * 255.0;
+        }
+}
 
 static void arrange(int begin, int end, float *p1)
 {
@@ -144,7 +170,7 @@ static void fourrier(float data[], unsigned long nn[], int ndim, int isign)
     }
 }
 
-static void fft(float **matreal, float **matimg, int lgth, int wdth)
+static void _fft(float **matreal, float **matimg, int lgth, int wdth, int direction)
 {
     int i, j, posx, posy;
     float *data, *freqreal, *freqim;
@@ -165,7 +191,7 @@ static void fft(float **matreal, float **matimg, int lgth, int wdth)
             data[2 * (i * lgth + j) + 2] = matimg[i][j];
         }
 
-    fourrier(data, nn, FFT2D, FFT);
+    fourrier(data, nn, FFT2D, direction > 0 ? FFT : IFFT);
 
     for (i = 0; i < (wdth * lgth); i++)
     {
@@ -187,142 +213,45 @@ static void fft(float **matreal, float **matimg, int lgth, int wdth)
     free(nn);
 }
 
-static void ifft(float **matreal, float **matimg, int lgth, int wdth)
-{
-    int i, j, posx, posy;
-    float *data, *freqreal, *freqim;
-    unsigned long *nn;
-
-    data = (float *)malloc(sizeof(float) * (2 * wdth * lgth) + 1);
-    freqreal = (float *)malloc(sizeof(float) * (wdth * lgth));
-    freqim = (float *)malloc(sizeof(float) * (wdth * lgth));
-    nn = (unsigned long *)malloc(sizeof(unsigned long) * (FFT2D + 1));
-
-    nn[1] = lgth;
-    nn[2] = wdth;
-
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
-        {
-            data[2 * (i * lgth + j) + 1] = matreal[i][j];
-            data[2 * (i * lgth + j) + 2] = matimg[i][j];
-        }
-
-    fourrier(data, nn, FFT2D, IFFT);
-
-    for (i = 0; i < (wdth * lgth); i++)
-    {
-        freqreal[i] = data[(2 * i) + 1];
-        freqim[i] = data[(2 * i) + 2];
-    }
-
-    for (i = 0; i < (wdth * lgth); i++)
-    {
-        posy = (int)(i / wdth);
-        posx = (int)(i % wdth);
-        matreal[posy][posx] = freqreal[i] / (wdth * lgth);
-        matimg[posy][posx] = freqim[i] / (wdth * lgth);
-    }
-
-    free(data);
-    free(freqreal);
-    free(freqim);
-    free(nn);
+static void fft(float **matreal, float **matimg, int lgth, int wdth) {
+    _fft(matreal, matimg, lgth, wdth, 1);
 }
 
-static void mod(float **modout, float **matreal, float **matim, int lgth, int wdth)
+
+static void ifft(float **matreal, float **matimg, int lgth, int wdth) {
+    _fft(matreal, matimg, lgth, wdth, -1);  
+}
+
+static void fftshift(float **in, int length, int width)
 {
     int i, j;
 
-    for (i = 0; i < lgth; i++)
+    for (i = 0; i < length; ++i)
     {
-        for (j = 0; j < wdth; j++)
+        for (j = 0; j < width; ++j)
         {
-            modout[i][j] = sqrt((matreal[i][j] * matreal[i][j]) + (matim[i][j] * matim[i][j]));
-        }
-    }
-}
-
-static void mult(float **mat, float coef, int lgth, int wdth)
-{
-    int i, j;
-
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
-        {
-            mat[i][j] *= coef;
-
-            if (mat[i][j] > 255)
+            if (i < length / 2)
             {
-                mat[i][j] = 255;
+                if (j < width / 2)
+                {
+                    in[i][j] = in[i + length / 2][j + width / 2];
+                }
+                else
+                {
+                    in[i][j] = in[i + length / 2][j - width / 2];
+                }
             }
-        }
-}
-
-static void fftshift(float **mat, int lgth, int wdth)
-{
-    int i, j;
-    float max, min;
-
-    min = mat[0][0];
-
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
-        {
-            if (mat[i][j] < min)
+            else
             {
-                min = mat[i][j];
+                if (j < width / 2)
+                {
+                    in[i][j] = in[i - length / 2][j + width / 2];
+                }
+                else
+                {
+                    in[i][j] = in[i - length / 2][j - width / 2];
+                }
             }
-        }
-
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
-        {
-            mat[i][j] -= min;
-        }
-
-    max = mat[0][0];
-
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
-        {
-            if (mat[i][j] > max)
-            {
-                max = mat[i][j];
-            }
-        }
-
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
-        {
-            mat[i][j] *= (255 / max);
-        }
-}
-
-static void multComplex(float **matrealout, float **matimout, float **matreal1in, float **matim1in, float **matreal2in, float **matim2in, int lgth, int wdth)
-{
-    int i, j;
-
-    for (i = 0; i < lgth; i++)
-    {
-        for (j = 0; j < wdth; j++)
-        {
-            matrealout[i][j] = matreal1in[i][j] * matreal2in[i][j] - matim1in[i][j] * matim2in[i][j];
-            matimout[i][j] = matreal1in[i][j] * matim2in[i][j] + matreal2in[i][j] * matim1in[i][j];
-        }
-    }
-}
-
-static void square(float **matrealout, float **matimout, float **matrealin, float **matimin, int lgth, int wdth)
-{
-    int i, j;
-
-    for (i = 0; i < lgth; i++)
-    {
-        for (j = 0; j < wdth; j++)
-        {
-            matrealout[i][j] = SQUARE(matrealin[i][j]) - SQUARE(matimin[i][j]);
-            matimout[i][j] = 2 * matrealin[i][j] * matimin[i][j];
         }
     }
 }
