@@ -148,13 +148,13 @@ int readImage(int N, char *path, float **m_real)
 void makeWhiteNoise(int N, float **m_real)
 {
   int offset = 0, i, j;
-
+  unsigned char col;
   for (j = 0; j < N; ++j)
   {
     for (i = 0; i < N; ++i)
     {
 
-      unsigned char col = rand() % 255;
+      col = rand() % 255;
 
       m_real[i][j] =
           (float)col + (float)col + (float)col;
