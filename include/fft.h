@@ -3,7 +3,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-
 #define SWAP(x, y)        \
     do                    \
     {                     \
@@ -90,14 +89,14 @@ static void fourrier(float data[], unsigned long nn[], int ndim, int isign)
     float tempi, tempr;
     double theta, wi, wpi, wpr, wr, wtemp;
 
-    for (ntot = 1, idim = 1; idim <= ndim; idim++)
+    for (ntot = 1, idim = 1; idim <= ndim; ++idim)
     {
         ntot *= nn[idim];
     }
 
     nprev = 1;
 
-    for (idim = ndim; idim >= 1; idim--)
+    for (idim = ndim; idim >= 1; --idim)
     {
         n = nn[idim];
         nrem = ntot / (n * nprev);
@@ -184,8 +183,8 @@ static void _fft(float **matreal, float **matimg, int lgth, int wdth, int direct
     nn[1] = lgth;
     nn[2] = wdth;
 
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
+    for (i = 0; i < lgth; ++i)
+        for (j = 0; j < wdth; ++j)
         {
             data[2 * (i * lgth + j) + 1] = matreal[i][j];
             data[2 * (i * lgth + j) + 2] = matimg[i][j];
@@ -193,13 +192,13 @@ static void _fft(float **matreal, float **matimg, int lgth, int wdth, int direct
 
     fourrier(data, nn, FFT2D, direction > 0 ? FFT : IFFT);
 
-    for (i = 0; i < (wdth * lgth); i++)
+    for (i = 0; i < (wdth * lgth); ++i)
     {
         freqreal[i] = data[(2 * i) + 1];
         freqim[i] = data[(2 * i) + 2];
     }
 
-    for (i = 0; i < (wdth * lgth); i++)
+    for (i = 0; i < (wdth * lgth); ++i)
     {
         posy = (int)(i / wdth);
         posx = (int)(i % wdth);
@@ -213,13 +212,14 @@ static void _fft(float **matreal, float **matimg, int lgth, int wdth, int direct
     free(nn);
 }
 
-static void fft(float **matreal, float **matimg, int lgth, int wdth) {
+static void fft(float **matreal, float **matimg, int lgth, int wdth)
+{
     _fft(matreal, matimg, lgth, wdth, 1);
 }
 
-
-static void ifft(float **matreal, float **matimg, int lgth, int wdth) {
-    _fft(matreal, matimg, lgth, wdth, -1);  
+static void ifft(float **matreal, float **matimg, int lgth, int wdth)
+{
+    _fft(matreal, matimg, lgth, wdth, -1);
 }
 
 static void fftshift(float **in, int length, int width)

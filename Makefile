@@ -1,6 +1,6 @@
 CC=gcc
 EXE=fftNoise
-FLAGS=-O3 -lm -Wall
+FLAGS=-O3 -lm
 OUTPUT_PATH = bin
 SRC_PATH = src
 INC_PATH = include
@@ -19,4 +19,4 @@ clean:
 		analysis/extern/bin/ \
 		output/ \
 		analysis/*.csv \
-		analysis/*.png
+		analysis/plots/
