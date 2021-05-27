@@ -1,13 +1,22 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
+import os
 data = np.genfromtxt('analysis/analysis.csv',
-                     delimiter=',', names=['type', 'dt', 'N'])
+                     delimiter=',', names=['N', 'pNoise', 'sNoise', 'fftNoise'])
 
-plt.plot(data['N'], data['dt'], '-p', color='red')
-plt.legend(["Fractal Noise"])
-plt.ylabel("Time (seconds)")
-plt.xlabel("Image resolution (NxN pixels)")
+plt1 = plt.plot(data['N'], data['pNoise'], '-p', color='red', label="Perlin Noise")
+plt2 = plt.plot(data['N'], data['sNoise'], '-p', color='blue', label="Simplex Noise")
+plt3 = plt.plot(data['N'], data['fftNoise'], '-p', color='green', label="FFT Noise")
+
+plt.legend()
+
+plt.ylabel("Time (seocnds)")
+plt.xlabel("Resolution (NxN pixels)")
+
+plt.xscale("log", base=2)
+
 
 # function to show the plot
-plt.savefig('analysis/plot.png')
+if(not os.path.exists("analysis/plots")):
+    os.system("mkdir analysis/plots")
+plt.savefig('analysis/plots/plot.png')

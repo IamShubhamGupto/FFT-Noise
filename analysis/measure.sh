@@ -1,8 +1,8 @@
 #!/bin/bash
+make
+make -C analysis/extern 
+
 SET_N=(
-    8
-    16
-    32
     64
     128
     256
@@ -13,18 +13,21 @@ SET_N=(
     8192
 )
 
-PROGRAM=fftNoise
-PROGRAM_DIR=bin
+EXTERN="analysis/extern/bin/extern"
+MAIN="bin/fftNoise"
 
-RESULT_PATH=analysis/analysis.csv
+RESULT_PATH="analysis/analysis.csv"
 
-echo "type,dt,N" > $RESULT_PATH
+echo "N,pNoise,sNosie,fftNoise" > $RESULT_PATH
 
 for i in "${SET_N[@]}"
 do
-   DT=$($PROGRAM_DIR/$PROGRAM 2 $i -d $ARGS 2>&1 > /dev/null)
-   RESULT="${PROGRAM},${DT},${i}"
+
+    RESULT_MAIN=$($MAIN 2 $i -d 2>&1 > /dev/null) 
+    RESULT_EXTERN=$($EXTERN $i 2>&1 > /dev/null) 
+
+   RESULT="${i},${RESULT_EXTERN},${RESULT_MAIN}"
    echo $RESULT >> $RESULT_PATH
 done
 
-# python analysis/plot.py
+python3 analysis/plot.py

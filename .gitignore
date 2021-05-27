@@ -1,6 +1,6 @@
 output
 *.csv
-
+analysis/plots
 # Prerequisites
 *.d
 bin/
