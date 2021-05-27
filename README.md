@@ -19,7 +19,7 @@ It takes in White Noise as input (possibly from an image) and returns FFT-Noise 
 <p align="center">
     <img src="./assets/fft_noise.png" alt="FFT-Noise Sample"> 
   <h5 align="center">
-    Fractal Noise obtained from <a href="assets/download.png">White Noise</a>. </br> <i>R = 2.4</i>
+    Fractal Noise obtained from <a href="assets/white_noise.png">White Noise</a>. </br> <i>R = 2.4</i>
   </h5>
 </p>
 
@@ -129,14 +129,14 @@ To benchmark FFT-Noise we compared it against the most used noise algorithms Per
 
 |N                 |Perlin Noise (8 Octaves)                      |Simplex Noise (8 Octaves)           |FFT-Noise     |
 |------------------|----------------------------|-----------------|-------------|
-|`64px`                |`0.000982ms`                    |`0.000938ms`         |`0.000805ms`     |
-|`128px`               |`0.002537ms`                    |`0.002444ms`         |`0.004144ms`     |
-|`256px`               |`0.010036ms`                    |`0.008698ms`         |`0.017319ms`     |
-|`512px`               |`0.020937ms`                    |`0.021302ms`         |`0.047126ms`     |
-|`1024px`              |`0.082808ms`                    |`0.081911ms`         |`0.248353ms`     |
-|`2048px`              |`0.355524ms`                    |`0.358834ms`         |`1.334198ms`     |
-|`4096px`              |`1.373994ms`                    |`1.350424ms`         |`6.716200ms`     |
-|`8192px`              |`6.552335ms`                    |`6.300322ms`         |`33.047118ms`    |
+|`64px`                |`0.000982s`                    |`0.000938s`         |`0.000805s`     |
+|`128px`               |`0.002537s`                    |`0.002444s`         |`0.004144s`     |
+|`256px`               |`0.010036s`                    |`0.008698s`         |`0.017319s`     |
+|`512px`               |`0.020937s`                    |`0.021302s`         |`0.047126s`     |
+|`1024px`              |`0.082808s`                    |`0.081911s`         |`0.248353s`     |
+|`2048px`              |`0.355524s`                    |`0.358834s`         |`1.334198s`     |
+|`4096px`              |`1.373994s`                    |`1.350424s`         |`6.716200s`     |
+|`8192px`              |`6.552335s`                    |`6.300322s`         |`33.047118s`    |
 
 
 As expected, Perlin Noise and Simplex Noise perform the same with no significant difference in performance. However, FFT-Noise is significantly slow.
