@@ -601,4 +601,15 @@ double GBlur1D(double stdDev, double x)
 
     return ret;
 }
+
+void SimplexNoise(int N)
+{
+    float **noise_gen = malloc2d(N, N);
+    int y, x;
+    for (y = 0; y < N; ++y)
+        for (x = 0; x < N; ++x)
+            noise_gen[y][x] = Noise2D(x, y);
+
+    free2d(noise_gen);
+}
 #endif

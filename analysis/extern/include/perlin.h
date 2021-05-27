@@ -1,7 +1,7 @@
 #ifndef PERLIN_H
 #define PERLIN_H
 #include <stdio.h>
-
+#include "../../../include/fractal.h"
 static int SEED = 0;
 
 static int hash_set[] = {208, 34, 231, 213, 32, 248, 233, 56, 161, 78, 24, 140, 71, 48, 140, 254, 245, 255, 247, 247, 40,
@@ -67,5 +67,16 @@ float perlin2d(float x, float y, float freq, int depth)
     }
 
     return fin / div;
+}
+
+void PerlinNoise(float freq, float depth, int N)
+{
+    float **noise_gen = malloc2d(N, N);
+    int y, x;
+    for (y = 0; y < N; ++y)
+        for (x = 0; x < N; ++x)
+            noise_gen[y][x] = perlin2d(x, y, freq, depth);
+
+    free2d(noise_gen);
 }
 #endif

@@ -2,11 +2,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 data = np.genfromtxt('analysis/analysis.csv',
-                     delimiter=',', names=['type', 'dt', 'N'])
+                     delimiter=',', names=['N', 'perlin_noise', 'simplex_noise', 'fft_noise'])
 
-plt.plot(data['N'], data['dt'], '-p', color='red')
-
-plt.legend(["FFT Noise"], loc="best")
+plt.plot(data['N'], data['perlin_noise'], '-p', color='red')
+plt.plot(data['N'], data['simplex_noise'], '-p', color='blue')
+plt.plot(data['N'], data['fft_noise'], '-p', color='green')
+plt.legend()
 plt.ylabel("Time (milliseconds)")
 plt.xlabel("Resolution (NxN pixels)")
 

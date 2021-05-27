@@ -4,7 +4,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
-
 #define SWAP(x, y)        \
     do                    \
     {                     \
@@ -18,13 +17,13 @@
 #define FFT 1
 #define FFT2D 2
 
-static void center(float **in, float **out, int length, int width)
+static void fftshift(float **in, float **out, int length, int width)
 {
     int i, j;
 
-    for (i = 0; i < length; i++)
+    for (i = 0; i < length; ++i)
     {
-        for (j = 0; j < width; j++)
+        for (j = 0; j < width; ++j)
         {
             if (i < length / 2)
             {
@@ -101,7 +100,7 @@ static void fourrier(float data[], unsigned long nn[], int ndim, int isign)
 
     nprev = 1;
 
-    for (idim = ndim; idim >= 1; idim--)
+    for (idim = ndim; idim >= 1; --idim)
     {
         n = nn[idim];
         nrem = ntot / (n * nprev);
@@ -188,8 +187,8 @@ static void fft(float **matreal, float **matimg, int lgth, int wdth)
     nn[1] = lgth;
     nn[2] = wdth;
 
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
+    for (i = 0; i < lgth; ++i)
+        for (j = 0; j < wdth; ++j)
         {
             data[2 * (i * lgth + j) + 1] = matreal[i][j];
             data[2 * (i * lgth + j) + 2] = matimg[i][j];
@@ -197,13 +196,13 @@ static void fft(float **matreal, float **matimg, int lgth, int wdth)
 
     fourrier(data, nn, FFT2D, FFT);
 
-    for (i = 0; i < (wdth * lgth); i++)
+    for (i = 0; i < (wdth * lgth); ++i)
     {
         freqreal[i] = data[(2 * i) + 1];
         freqim[i] = data[(2 * i) + 2];
     }
 
-    for (i = 0; i < (wdth * lgth); i++)
+    for (i = 0; i < (wdth * lgth); ++i)
     {
         posy = (int)(i / wdth);
         posx = (int)(i % wdth);
@@ -231,8 +230,8 @@ static void ifft(float **matreal, float **matimg, int lgth, int wdth)
     nn[1] = lgth;
     nn[2] = wdth;
 
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
+    for (i = 0; i < lgth; ++i)
+        for (j = 0; j < wdth; ++j)
         {
             data[2 * (i * lgth + j) + 1] = matreal[i][j];
             data[2 * (i * lgth + j) + 2] = matimg[i][j];
@@ -240,13 +239,13 @@ static void ifft(float **matreal, float **matimg, int lgth, int wdth)
 
     fourrier(data, nn, FFT2D, IFFT);
 
-    for (i = 0; i < (wdth * lgth); i++)
+    for (i = 0; i < (wdth * lgth); ++i)
     {
         freqreal[i] = data[(2 * i) + 1];
         freqim[i] = data[(2 * i) + 2];
     }
 
-    for (i = 0; i < (wdth * lgth); i++)
+    for (i = 0; i < (wdth * lgth); ++i)
     {
         posy = (int)(i / wdth);
         posx = (int)(i % wdth);
@@ -264,9 +263,9 @@ static void mod(float **modout, float **matreal, float **matim, int lgth, int wd
 {
     int i, j;
 
-    for (i = 0; i < lgth; i++)
+    for (i = 0; i < lgth; ++i)
     {
-        for (j = 0; j < wdth; j++)
+        for (j = 0; j < wdth; ++j)
         {
             modout[i][j] = sqrt((matreal[i][j] * matreal[i][j]) + (matim[i][j] * matim[i][j]));
         }
@@ -277,8 +276,8 @@ static void mult(float **mat, float coef, int lgth, int wdth)
 {
     int i, j;
 
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
+    for (i = 0; i < lgth; ++i)
+        for (j = 0; j < wdth; ++j)
         {
             mat[i][j] *= coef;
 
@@ -289,43 +288,39 @@ static void mult(float **mat, float coef, int lgth, int wdth)
         }
 }
 
-static void fftshift(float **mat, int lgth, int wdth)
+static void normalise(float **mat, int lgth, int wdth)
 {
     int i, j;
     float max, min;
 
     min = mat[0][0];
 
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
+    for (i = 0; i < lgth; ++i)
+        for (j = 0; j < wdth; ++j)
         {
             if (mat[i][j] < min)
             {
                 min = mat[i][j];
             }
         }
+    // max is calculated after subtracting the min element from entire matrix, hence 2 passes
+    // bad results if min and max calculated together
+    max = mat[0][0] - min;
 
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
+    for (i = 0; i < lgth; ++i)
+        for (j = 0; j < wdth; ++j)
         {
             mat[i][j] -= min;
-        }
-
-    max = mat[0][0];
-
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
-        {
             if (mat[i][j] > max)
             {
                 max = mat[i][j];
             }
         }
 
-    for (i = 0; i < lgth; i++)
-        for (j = 0; j < wdth; j++)
+    for (i = 0; i < lgth; ++i)
+        for (j = 0; j < wdth; ++j)
         {
-            mat[i][j] *= (255 / max);
+            mat[i][j] = (mat[i][j] / max) * 255;
         }
 }
 
@@ -333,9 +328,9 @@ static void multComplex(float **matrealout, float **matimout, float **matreal1in
 {
     int i, j;
 
-    for (i = 0; i < lgth; i++)
+    for (i = 0; i < lgth; ++i)
     {
-        for (j = 0; j < wdth; j++)
+        for (j = 0; j < wdth; ++j)
         {
             matrealout[i][j] = matreal1in[i][j] * matreal2in[i][j] - matim1in[i][j] * matim2in[i][j];
             matimout[i][j] = matreal1in[i][j] * matim2in[i][j] + matreal2in[i][j] * matim1in[i][j];
@@ -347,9 +342,9 @@ static void square(float **matrealout, float **matimout, float **matrealin, floa
 {
     int i, j;
 
-    for (i = 0; i < lgth; i++)
+    for (i = 0; i < lgth; ++i)
     {
-        for (j = 0; j < wdth; j++)
+        for (j = 0; j < wdth; ++j)
         {
             matrealout[i][j] = SQUARE(matrealin[i][j]) - SQUARE(matimin[i][j]);
             matimout[i][j] = 2 * matrealin[i][j] * matimin[i][j];

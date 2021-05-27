@@ -1,8 +1,8 @@
 #include <time.h>
 #include <stdlib.h>
-#include "../../../include/perlin.h"
-#include "../../../include/simplex.h"
-#include "../../../include/fractal.h"
+#include "../include/perlin.h"
+#include "../include/simplex.h"
+// #include "../../../include/fractal.h"
 
 int main(int argc, char **argv)
 {
@@ -22,17 +22,13 @@ int main(int argc, char **argv)
 
     START_TIME_PERLIN = (float)clock() / CLOCKS_PER_SEC;
 
-    for (y = 0; y < N; y++)
-        for (x = 0; x < N; x++)
-            perlin2d(x, y, 0.5, 8);
+    PerlinNoise(0.5, 8, N);
 
     END_TIME_PERLIN = (float)clock() / CLOCKS_PER_SEC;
 
     START_TIME_SIMPLEX = (float)clock() / CLOCKS_PER_SEC;
 
-    for (y = 0; y < N; y++)
-        for (x = 0; x < N; x++)
-            Noise2D(x, y);
+    SimplexNoise(N);
 
     END_TIME_SIMPLEX = (float)clock() / CLOCKS_PER_SEC;
 
@@ -42,7 +38,7 @@ int main(int argc, char **argv)
 
     END_TIME_FFT = (float)clock() / CLOCKS_PER_SEC;
 
-    fprintf(stderr, "%f %f %f\n", (END_TIME_PERLIN - START_TIME_PERLIN) * 1000,
+    fprintf(stderr, "%d %f %f %f\n", N, (END_TIME_PERLIN - START_TIME_PERLIN) * 1000,
             (END_TIME_SIMPLEX - START_TIME_SIMPLEX) * 1000, (END_TIME_FFT - START_TIME_FFT) * 1000);
     return 0;
 }

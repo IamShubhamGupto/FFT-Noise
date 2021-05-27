@@ -17,7 +17,7 @@ float **malloc2d(int v, int h)
     m = (float **)malloc(sizeof(float *) * v);
     p = (float *)malloc(sizeof(float) * h * v);
 
-    for (i = 0; i < v; i++, p += h)
+    for (i = 0; i < v; ++i, p += h)
     {
         m[i] = p;
     }
@@ -79,11 +79,10 @@ void saveImage(float **data, int x, int y)
     }
 
     int res = stbi_write_png("output/fractal_noise.png", x, y, COMP, temp, 0);
-
+    free(temp);
     if (!res)
     {
         printf("Error saving file\n");
-        free(temp);
         exit(1);
     }
 }
@@ -103,7 +102,7 @@ unsigned char *initRandInput(int DEBUG, int N)
     unsigned char *data = (unsigned char *)malloc(sizeof(unsigned char) * size);
     unsigned char col;
     int i, j;
-    for (i = 0, j = 0; i < size; i += 4, j++)
+    for (i = 0, j = 0; i < size; i += 4, ++j)
     {
         col = rand() % 255;
 
@@ -118,7 +117,7 @@ unsigned char *initRandInput(int DEBUG, int N)
     {
 
         unsigned int *rand_img = (unsigned int *)malloc(sizeof(unsigned int) * size);
-        for (i = 0, j = 0; i < size; i += 4, j++)
+        for (i = 0, j = 0; i < size; i += 4, ++j)
         {
             col = data[i];
             rand_img[j] = toRGBA(col, col, col, 255);
@@ -184,11 +183,10 @@ void dataToComplexReal(int N, float **m_real, unsigned char *data)
 void FFTNoise(int DEBUG, float beta, int N, char *filename)
 {
     unsigned char *data;
-    unsigned int *modfft;
     float **m_real = malloc2d(N, N);
-    float **modulus = malloc2d(N, N);
+    // float **modulus = malloc2d(N, N);
+    float **temp = malloc2d(N, N);
     float **m_imag = malloc2d(N, N);
-    float **filter = malloc2d(N, N);
     float *frequency = malloc1D(N);
 
     int i, j, res, offset;
@@ -202,8 +200,6 @@ void FFTNoise(int DEBUG, float beta, int N, char *filename)
         return;
     }
 
-    //printf("Beta : %f\nwidth : %d\nheight : %d\n", beta, N, N);
-
     dataToComplexReal(N, m_real, data);
 
     fft(m_real, m_imag, N, N);
@@ -211,26 +207,26 @@ void FFTNoise(int DEBUG, float beta, int N, char *filename)
 
     applyFilter(frequency, m_real, N, N, beta);
     applyFilter(frequency, m_imag, N, N, beta);
-    mod(modulus, m_real, m_imag, N, N);
-    fftshift(modulus, N, N);
-    center(modulus, m_real, N, N);
-
+    //bring nyquist frequency to center and store in temp
+    fftshift(m_real, temp, N, N);
+    //forget old m_real values, replace by centered m_real
+    m_real = temp;
     if (!DEBUG)
     {
+        printf("Beta : %f\nwidth : %d\nheight : %d\n", beta, N, N);
+        //scale to 0 to 255
+        normalise(m_real, N, N);
         saveImage(m_real, N, N);
     }
 
     ifft(m_real, m_imag, N, N);
-    fftshift(m_real, N, N);
+    normalise(m_real, N, N);
 
     if (!DEBUG)
         saveImage(m_real, N, N);
 
-    free2d(modulus);
     free2d(m_imag);
     free2d(m_real);
-    free(modfft);
-    free2d(filter);
     free(frequency);
 
     if (filename != NULL)
