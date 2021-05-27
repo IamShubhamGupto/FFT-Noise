@@ -43,9 +43,9 @@ However, the only benefit we found was that it was in fact **Infinitely Tilable*
 
 # How does this work?
 
-According to _Techniques for Fractal Terrain Generation_<sup>2</sup> FFT-Noise is generated in four distint steps:
+According to _Techniques for Fractal Terrain Generation_<sup>2</sup> FFT-Noise is generated in four distinct steps:
 
-- Obtain an array of (random valued) point.
+- Obtain an array of (random valued) points.
 - Perform an FFT on the points.
 - Scale the FFT result by a Frequency Filter
 - Perform an Inverse FFT (IFFT).
@@ -136,7 +136,7 @@ To benchmark FFT-Noise we compared it against the most used noise algorithms Per
 |`1024px`              |`0.082808ms`                    |`0.081911ms`         |`0.248353ms`     |
 |`2048px`              |`0.355524ms`                    |`0.358834ms`         |`1.334198ms`     |
 |`4096px`              |`1.373994ms`                    |`1.350424ms`         |`6.716200ms`     |
-|`8192px`              |`6.552335ms`                    |`6.300322ms`         |3`3.047118ms`    |
+|`8192px`              |`6.552335ms`                    |`6.300322ms`         |`33.047118ms`    |
 
 
 As expected, Perlin Noise and Simplex Noise perform the same with no significant difference in performance. However, FFT-Noise is significantly slow.
