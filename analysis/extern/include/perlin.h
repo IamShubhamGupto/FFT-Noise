@@ -1,7 +1,7 @@
 #ifndef PERLIN_H
 #define PERLIN_H
-#include <stdio.h>
-#include "../../../include/fractal.h"
+#include "./common.h"
+
 static int SEED = 0;
 
 static int hash_set[] = {208, 34, 231, 213, 32, 248, 233, 56, 161, 78, 24, 140, 71, 48, 140, 254, 245, 255, 247, 247, 40,

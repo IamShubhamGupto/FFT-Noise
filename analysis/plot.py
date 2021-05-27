@@ -2,14 +2,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 data = np.genfromtxt('analysis/analysis.csv',
-                     delimiter=',', names=['N', 'perlin_noise', 'simplex_noise', 'fft_noise'])
+                     delimiter=',', names=['N', 'pNoise', 'sNoise', 'fftNoise'])
 
-plt.plot(data['N'], data['perlin_noise'], '-p', color='red')
-plt.plot(data['N'], data['simplex_noise'], '-p', color='blue')
-plt.plot(data['N'], data['fft_noise'], '-p', color='green')
+plt1 = plt.plot(data['N'], data['pNoise'], '-p', color='red', label="Perlin Noise")
+plt2 = plt.plot(data['N'], data['sNoise'], '-p', color='blue', label="Simplex Noise")
+plt3 = plt.plot(data['N'], data['fftNoise'], '-p', color='green', label="FFT Noise")
+
 plt.legend()
-plt.ylabel("Time (milliseconds)")
+
+plt.ylabel("Time (seocnds)")
 plt.xlabel("Resolution (NxN pixels)")
+
+plt.xscale("log", base=2)
 
 
 # function to show the plot

@@ -12,6 +12,7 @@ Published originally as a Garrysmod Lua Extension under the pseudonym Levybreak
 #define SIMPLEX_Y 1
 #define SIMPLEX_Z 2
 #define SIMPLEX_W 3
+#include "./common.h"
 
 typedef double (*noise2Dptr)(double, double);
 typedef double (*noise3Dptr)(double, double, double);
@@ -602,13 +603,34 @@ double GBlur1D(double stdDev, double x)
     return ret;
 }
 
-void SimplexNoise(int N)
+float simplex2d(float x, float y, float freq, int depth)
+{
+    float xa = x * freq;
+    float ya = y * freq;
+    float amp = 1.0;
+    float fin = 0;
+    float div = 0.0;
+
+    int i;
+    for (i = 0; i < depth; i++)
+    {
+        div += 256 * amp;
+        fin += noise2d(xa, ya) * amp;
+        amp /= 2;
+        xa *= 2;
+        ya *= 2;
+    }
+
+    return fin / div;
+}
+
+void SimplexNoise(float freq, int depth, int N)
 {
     float **noise_gen = malloc2d(N, N);
     int y, x;
     for (y = 0; y < N; ++y)
         for (x = 0; x < N; ++x)
-            noise_gen[y][x] = Noise2D(x, y);
+            noise_gen[y][x] = simplex2d(x, y, freq, depth);
 
     free2d(noise_gen);
 }
