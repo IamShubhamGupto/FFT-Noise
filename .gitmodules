@@ -1,0 +1,6 @@
+[submodule "include/libattopng"]
+	path = include/libattopng
+	url = https://github.com/misc0110/libattopng.git
+[submodule "include/upng"]
+	path = include/upng
+	url = https://github.com/elanthis/upng.git
