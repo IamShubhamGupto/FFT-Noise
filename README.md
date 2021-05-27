@@ -147,7 +147,7 @@ A GPU-based implementation might perform better than a CPU-based one. However, w
 
 | Reference | Source | 
 |----------|--------|
-| <sup>1</sup>Frequency Synthesis of Landscapes (and clouds) | [Paul Bourke](http://paulbourke.net/fractals/noise/) | 
+| <sup>1</sup>Frequency Synthesis of Landscapes (and clouds) | [Paul Bourke](http://paulbourke.net/fractals/noise/#:~:text=Frequency%20Synthesis%20of%20Landscapes%20(and%20clouds)&text=Frequency%20synthesis%20is%20based%20upon,related%20to%20the%20fractal%20dimension.) | 
 | <sup>2</sup>Techniques for Fractal Terrain Generation | [Krista Bird, et al.](https://web.williams.edu/Mathematics/sjmiller/public_html/hudson/Dickerson_Terrain.pdf) | 
 | 2D FFT Function | [Karim Naaji](https://github.com/karimnaaji/fft) | 
 | Generating noise with different power spectra laws | [Paul Bourke](http://paulbourke.net/fractals/noise/) |
