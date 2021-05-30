@@ -33,7 +33,7 @@ float **malloc2d(int v, int h) {
   m = (float **)malloc(sizeof(float *) * v);
   p = (float *)malloc(sizeof(float) * h * v);
 
-  for (i = 0; i < v; i++, p += h) {
+  for (i = 0; i < v; ++i, p += h) {
     m[i] = p;
   }
 
@@ -129,19 +129,14 @@ void applyFilter(float *frequency, float **m_real, float **m_imag, int lgth,
   int j;
   float **radial_freq = malloc2d(lgth, wdth);
 
-  // Loop through the input
   for (i = 0; i < lgth; ++i) {
     for (j = 0; j < wdth; ++j) {
-
-      // Calculate the frequency at point ij
       radial_freq[i][j] =
           sqrt((frequency[i] * frequency[i]) + (frequency[j] * frequency[j]));
-
       if (radial_freq[i][j] == 0) {
         m_real[i][j] = 0.0;
         m_imag[i][j] = 0.0;
       } else {
-        // Here is the (a * 1/f^r) part. It can be simply rewritten as (a/f^r)
         m_real[i][j] = m_real[i][j] / (pow(radial_freq[i][j], beta) * lgth);
         m_imag[i][j] = m_imag[i][j] / (pow(radial_freq[i][j], beta) * lgth);
       }
@@ -155,13 +150,14 @@ void applyFilter(float *frequency, float **m_real, float **m_imag, int lgth,
  */
 void makeWhiteNoise(int N, float **m_real) {
   int offset = 0, i, j;
+  unsigned char col;
 
   // Simply creates a 2D array of random values
   for (j = 0; j < N; ++j) {
     for (i = 0; i < N; ++i) {
 
       // Not the best random funciton but it works
-      unsigned char col = rand() % 255;
+      col = rand() % 255;
 
       m_real[i][j] = (float)col + (float)col + (float)col;
       m_real[i][j] /= COMP - 1;
@@ -183,7 +179,6 @@ void FFTN_noise(float beta, int N) {
   // Allocate various buffers
   float **m_real = malloc2d(N, N); // Real part of the FT
   float **m_imag = malloc2d(N, N); // Imaginary part of the FT
-  float **filter = malloc2d(N, N);
   float *frequency = malloc1D(N);
 
   // If input image path is provided in the CLI then use the image
@@ -215,6 +210,5 @@ void FFTN_noise(float beta, int N) {
   // Free buffers
   free2d(m_imag);
   free2d(m_real);
-  free2d(filter);
   free(frequency);
 }
