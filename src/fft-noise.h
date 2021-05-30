@@ -129,14 +129,19 @@ void applyFilter(float *frequency, float **m_real, float **m_imag, int lgth,
   int j;
   float **radial_freq = malloc2d(lgth, wdth);
 
-  for (i = 0; i < lgth; ++i) {
-    for (j = 0; j < wdth; ++j) {
+  for (i = 0; i < lgth; ++i)
+  {
+    for (j = 0; j < wdth; ++j)
+    {
       radial_freq[i][j] =
           sqrt((frequency[i] * frequency[i]) + (frequency[j] * frequency[j]));
-      if (radial_freq[i][j] == 0) {
+      if (radial_freq[i][j] == 0)
+      {
         m_real[i][j] = 0.0;
         m_imag[i][j] = 0.0;
-      } else {
+      }
+      else
+      {
         m_real[i][j] = m_real[i][j] / (pow(radial_freq[i][j], beta) * lgth);
         m_imag[i][j] = m_imag[i][j] / (pow(radial_freq[i][j], beta) * lgth);
       }
